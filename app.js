@@ -26,10 +26,8 @@ function osc(freq, type, dur, vol, delay) {
 function playCountSound(num) {
   const c = ctx();
   const n = c.currentTime;
-  // 每個數字用不同頻率，像不同音高
   const freqMap = { 1: 523, 2: 587, 3: 659, 4: 698, 5: 784, 6: 880 };
   const freq = freqMap[num] || 500;
-  // 主音
   const o1 = c.createOscillator(), g1 = c.createGain();
   o1.type = "triangle";
   o1.frequency.setValueAtTime(freq, n);
@@ -38,7 +36,6 @@ function playCountSound(num) {
   o1.connect(g1).connect(c.destination);
   o1.start(n);
   o1.stop(n + 0.25);
-  // 泛音
   const o2 = c.createOscillator(), g2 = c.createGain();
   o2.type = "sine";
   o2.frequency.setValueAtTime(freq * 2, n);
@@ -47,6 +44,9 @@ function playCountSound(num) {
   o2.connect(g2).connect(c.destination);
   o2.start(n);
   o2.stop(n + 0.18);
+  // 提示音在數字音之後 20ms
+  osc(880, "sine", 0.08, 0.35, 0.02);
+  osc(1320, "sine", 0.05, 0.18, 0.02);
 }
 
 function speakNumber(num) {
@@ -65,7 +65,6 @@ function tick() {
   const count = beat + 1;
   flash(beat);
   speakNumber(count);
-  playBeatSound();
   beat = (beat + 1) % beatsPerBar;
 }
 
