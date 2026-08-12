@@ -4,7 +4,10 @@ const $ = id => document.getElementById(id);
 function announce(t) { $("status").textContent = t; }
 
 function ctx() {
-  if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+  if (!audio) {
+    audio = new (window.AudioContext || window.webkitAudioContext)();
+    loadVoiceBuffers();
+  }
   if (audio.state === "suspended") audio.resume();
   return audio;
 }
@@ -22,30 +25,30 @@ function osc(freq, type, dur, vol, delay) {
   o.stop(n + dur);
 }
 
-// 合成語音音檔（1-6）
+// 語音音檔（1-6）
+var voiceBuffers = {};
+function loadVoiceBuffers() {
+  for (var i = 1; i <= 6; i++) {
+    (function(num) {
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", "static/count_" + num + ".wav", true);
+      xhr.responseType = "arraybuffer";
+      xhr.onload = function() {
+        ctx().decodeAudioData(xhr.response, function(buf) {
+          voiceBuffers[num] = buf;
+        }, function() {});
+      };
+      xhr.send();
+    })(i);
+  }
+}
 function playCountSound(num) {
-  const c = ctx();
-  const n = c.currentTime;
-  const freqMap = { 1: 440, 2: 494, 3: 523, 4: 587, 5: 659, 6: 698 };
-  const freq = freqMap[num] || 500;
-  // 主音
-  const o1 = c.createOscillator(), g1 = c.createGain();
-  o1.type = "triangle";
-  o1.frequency.setValueAtTime(freq, n);
-  g1.gain.setValueAtTime(0.75, n);
-  g1.gain.exponentialRampToValueAtTime(0.001, n + 0.3);
-  o1.connect(g1).connect(c.destination);
-  o1.start(n);
-  o1.stop(n + 0.3);
-  // 泛音
-  const o2 = c.createOscillator(), g2 = c.createGain();
-  o2.type = "sine";
-  o2.frequency.setValueAtTime(freq * 1.5, n);
-  g2.gain.setValueAtTime(0.35, n);
-  g2.gain.exponentialRampToValueAtTime(0.001, n + 0.2);
-  o2.connect(g2).connect(c.destination);
-  o2.start(n);
-  o2.stop(n + 0.2);
+  var buf = voiceBuffers[num];
+  if (!buf) return;
+  var c = ctx(), src = c.createBufferSource();
+  src.buffer = buf;
+  src.connect(c.destination);
+  src.start();
 }
 
 function playBeatSound() {
