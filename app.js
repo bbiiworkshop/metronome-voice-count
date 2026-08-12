@@ -22,21 +22,35 @@ function osc(freq, type, dur, vol, delay) {
   o.stop(n + dur);
 }
 
-function playBeatSound() {
-  // 輕柔的提示音
-  osc(880, "sine", 0.08, 0.35);
-  osc(1320, "sine", 0.05, 0.18);
+// 合成語音音檔（1-6）
+function playCountSound(num) {
+  const c = ctx();
+  const n = c.currentTime;
+  // 每個數字用不同頻率，像不同音高
+  const freqMap = { 1: 523, 2: 587, 3: 659, 4: 698, 5: 784, 6: 880 };
+  const freq = freqMap[num] || 500;
+  // 主音
+  const o1 = c.createOscillator(), g1 = c.createGain();
+  o1.type = "triangle";
+  o1.frequency.setValueAtTime(freq, n);
+  g1.gain.setValueAtTime(0.7, n);
+  g1.gain.exponentialRampToValueAtTime(0.001, n + 0.25);
+  o1.connect(g1).connect(c.destination);
+  o1.start(n);
+  o1.stop(n + 0.25);
+  // 泛音
+  const o2 = c.createOscillator(), g2 = c.createGain();
+  o2.type = "sine";
+  o2.frequency.setValueAtTime(freq * 2, n);
+  g2.gain.setValueAtTime(0.3, n);
+  g2.gain.exponentialRampToValueAtTime(0.001, n + 0.18);
+  o2.connect(g2).connect(c.destination);
+  o2.start(n);
+  o2.stop(n + 0.18);
 }
 
 function speakNumber(num) {
-  if (!('speechSynthesis' in window)) return;
-  // 不要 cancel，讓語音自然銜接
-  const utt = new SpeechSynthesisUtterance(String(num));
-  utt.lang = "zh-TW";
-  utt.rate = 1.2;
-  utt.pitch = 1.0;
-  utt.volume = 1.0;
-  window.speechSynthesis.speak(utt);
+  playCountSound(num);
 }
 
 function flash(i) {
