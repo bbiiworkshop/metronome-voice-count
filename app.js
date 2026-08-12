@@ -1,4 +1,4 @@
-let bpm = 120, playing = false, timer = null, beat = 0, audio = null, beatsPerBar = 4;
+let bpm = 120, playing = false, timer = null, beat = 0, audio = null, beatsPerBar = 4, soundMode = "both";
 const $ = id => document.getElementById(id);
 
 function announce(t) { $("status").textContent = t; }
@@ -68,7 +68,8 @@ function flash(i) {
 function tick() {
   const count = beat + 1;
   flash(beat);
-  speakNumber(count);
+  if (soundMode === "both" || soundMode === "click") playBeatSound();
+  if (soundMode === "both" || soundMode === "voice") speakNumber(count);
   beat = (beat + 1) % beatsPerBar;
 }
 
@@ -204,6 +205,21 @@ function renderBeats() {
   const meterNames = { 2: "2/4", 3: "3/4", 4: "4/4", 5: "5/8", 6: "6/8" };
   $("beatStatus").textContent = meterNames[beatsPerBar] + " 拍。尚未開始。會用國語數字語音報讀每一拍。";
 }
+
+// 聲音模式切換
+document.querySelectorAll(".modeOpt").forEach(function(btn) {
+  btn.onclick = function() {
+    document.querySelectorAll(".modeOpt").forEach(function(x) {
+      x.classList.remove("selected");
+      x.setAttribute("aria-checked", "false");
+    });
+    btn.classList.add("selected");
+    btn.setAttribute("aria-checked", "true");
+    soundMode = btn.dataset.mode;
+    var names = { both: "兩者合一", click: "僅節拍器", voice: "僅人聲" };
+    announce("已切換為" + names[soundMode] + "模式。");
+  };
+});
 
 // 初始化
 renderBeats();
