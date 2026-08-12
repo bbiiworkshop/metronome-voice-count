@@ -31,7 +31,7 @@ function loadVoiceBuffers() {
   for (var i = 1; i <= 6; i++) {
     (function(num) {
       var xhr = new XMLHttpRequest();
-      var url = num === 3 ? "static/clean3_new.wav" : num === 4 ? "static/clean4_new.wav" : num === 5 ? "static/clean5_new.wav" : "static/clean" + num + ".wav";
+      var url = num === 3 ? "static/clean3_new.wav" : num === 4 ? "static/clean4_v2.wav" : num === 5 ? "static/clean5_new.wav" : "static/clean" + num + ".wav";
       xhr.open("GET", url, true);
       xhr.responseType = "arraybuffer";
       xhr.onload = function() {
