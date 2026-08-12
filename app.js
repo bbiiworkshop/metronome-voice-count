@@ -29,17 +29,14 @@ function playBeatSound() {
 }
 
 function speakNumber(num) {
-  // 國語數字報讀
-  if ('speechSynthesis' in window) {
-    // 取消之前的語音
-    window.speechSynthesis.cancel();
-    const utt = new SpeechSynthesisUtterance(String(num));
-    utt.lang = "zh-TW";
-    utt.rate = 1.1;
-    utt.pitch = 1.0;
-    utt.volume = 1.0;
-    window.speechSynthesis.speak(utt);
-  }
+  if (!('speechSynthesis' in window)) return;
+  // 不要 cancel，讓語音自然銜接
+  const utt = new SpeechSynthesisUtterance(String(num));
+  utt.lang = "zh-TW";
+  utt.rate = 1.2;
+  utt.pitch = 1.0;
+  utt.volume = 1.0;
+  window.speechSynthesis.speak(utt);
 }
 
 function flash(i) {
@@ -53,7 +50,6 @@ function flash(i) {
 function tick() {
   const count = beat + 1;
   flash(beat);
-  // 語音先於聲音，讓報讀稍微領先拍子
   speakNumber(count);
   playBeatSound();
   beat = (beat + 1) % beatsPerBar;
