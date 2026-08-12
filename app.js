@@ -31,7 +31,8 @@ function loadVoiceBuffers() {
   for (var i = 1; i <= 6; i++) {
     (function(num) {
       var xhr = new XMLHttpRequest();
-      xhr.open("GET", "static/clean" + num + ".wav", true);
+      var url = num === 3 ? "static/clean3_new.wav" : "static/clean" + num + ".wav";
+      xhr.open("GET", url, true);
       xhr.responseType = "arraybuffer";
       xhr.onload = function() {
         ctx().decodeAudioData(xhr.response, function(buf) {
