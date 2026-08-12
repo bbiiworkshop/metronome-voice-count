@@ -24,8 +24,8 @@ function osc(freq, type, dur, vol, delay) {
 
 function playBeatSound() {
   // 輕柔的提示音
-  osc(880, "sine", 0.08, 0.15);
-  osc(1320, "sine", 0.05, 0.08);
+  osc(880, "sine", 0.08, 0.23);
+  osc(1320, "sine", 0.05, 0.12);
 }
 
 function speakNumber(num) {
