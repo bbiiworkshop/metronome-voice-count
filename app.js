@@ -59,7 +59,15 @@ function playBeatSound() {
 }
 
 function speakNumber(num) {
-  playCountSound(num);
+  if (!('speechSynthesis' in window)) return;
+  // 真正的國語語音
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(String(num));
+  utt.lang = "zh-TW";
+  utt.rate = 1.5;
+  utt.pitch = 1.0;
+  utt.volume = 1.0;
+  window.speechSynthesis.speak(utt);
 }
 
 function flash(i) {
