@@ -26,24 +26,28 @@ function osc(freq, type, dur, vol, delay) {
 function playCountSound(num) {
   const c = ctx();
   const n = c.currentTime;
-  const freqMap = { 1: 523, 2: 587, 3: 659, 4: 698, 5: 784, 6: 880 };
+  // 降低頻率，聲音更柔和
+  const freqMap = { 1: 440, 2: 494, 3: 523, 4: 587, 5: 659, 6: 698 };
   const freq = freqMap[num] || 500;
+  // 主音（更飽滿的 envelope）
   const o1 = c.createOscillator(), g1 = c.createGain();
   o1.type = "triangle";
   o1.frequency.setValueAtTime(freq, n);
-  g1.gain.setValueAtTime(0.7, n);
-  g1.gain.exponentialRampToValueAtTime(0.001, n + 0.25);
+  g1.gain.setValueAtTime(0.01, n);
+  g1.gain.linearRampToValueAtTime(0.75, n + 0.03);
+  g1.gain.exponentialRampToValueAtTime(0.001, n + 0.35);
   o1.connect(g1).connect(c.destination);
   o1.start(n);
-  o1.stop(n + 0.25);
+  o1.stop(n + 0.35);
+  // 泛音（暖色）
   const o2 = c.createOscillator(), g2 = c.createGain();
   o2.type = "sine";
-  o2.frequency.setValueAtTime(freq * 2, n);
-  g2.gain.setValueAtTime(0.3, n);
-  g2.gain.exponentialRampToValueAtTime(0.001, n + 0.18);
+  o2.frequency.setValueAtTime(freq * 1.5, n);
+  g2.gain.setValueAtTime(0.35, n);
+  g2.gain.exponentialRampToValueAtTime(0.001, n + 0.25);
   o2.connect(g2).connect(c.destination);
   o2.start(n);
-  o2.stop(n + 0.18);
+  o2.stop(n + 0.25);
   // 提示音在數字音之後 20ms
   osc(880, "sine", 0.08, 0.35, 0.02);
   osc(1320, "sine", 0.05, 0.18, 0.02);
