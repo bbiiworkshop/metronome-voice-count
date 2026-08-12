@@ -51,10 +51,11 @@ function flash(i) {
 }
 
 function tick() {
-  playBeatSound();
   const count = beat + 1;
-  speakNumber(count);
   flash(beat);
+  // 語音先於聲音，讓報讀稍微領先拍子
+  speakNumber(count);
+  playBeatSound();
   beat = (beat + 1) % beatsPerBar;
 }
 
