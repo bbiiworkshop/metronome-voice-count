@@ -53,6 +53,11 @@ function playCountSound(num) {
   osc(1320, "sine", 0.05, 0.18, 0.02);
 }
 
+function playBeatSound() {
+  osc(880, "sine", 0.08, 0.35);
+  osc(1320, "sine", 0.05, 0.18);
+}
+
 function speakNumber(num) {
   playCountSound(num);
 }
